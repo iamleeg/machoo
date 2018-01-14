@@ -1,0 +1,15 @@
+subsystem machoo 500;
+
+#include <mach/std_types.defs>
+#include <mach/mach_types.defs>
+
+type machoo_selector = (MACH_MSG_TYPE_STRING, 8*80);
+
+import "machoo_defs.h";
+
+routine machooo_msg_send(
+	receiver: mach_port_t; /* request port */
+        selector: machoo_selector; /* message selector */
+    out response: mach_port_t /* result */
+);
+
