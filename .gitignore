@@ -2,4 +2,5 @@ machoo.h
 machooServer.c
 machooUser.c
 null
+null_client
 
