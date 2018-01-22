@@ -11,3 +11,11 @@ machooServer.c machooUser.c machoo.h: machoo_defs.h message_send.defs
 clean:
 	rm machooServer.c machooUser.c machoo.h
 
+.PHONY: start_null
+start_null: null
+	settrans -ac /tmp/null null
+
+.PHONY: stop_null
+stop_null:
+	settrans -fg /tmp/null
+
