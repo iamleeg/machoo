@@ -64,7 +64,7 @@ kern_return_t machoo_msg_send(
   {
     *response = receiver;
   }
-  return KERN_SUCCESS;
+  return ERR_SUCCESS;
 }
 
 int main(int argc, char **argv)
