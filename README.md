@@ -8,14 +8,14 @@ language.
 
 ## How do I use it?
 
-You don't, yet, it's not ready.
+You don't, yet, it's not ready. But look at the targets in the
+Makefile to work out what's going on.
 
 ## License Grant
 
 Copyright (C) 2018 Graham Lee.
 
-Despite the absence of boilerplate comments at the top of every source 
-file, this code is made available to you under the terms of the [GNU 
+This code is made available to you under the terms of the [GNU 
 General Public Licence, Version 
 3](https://www.gnu.org/licenses/gpl-3.0.en.html) or, at your discretion, 
 any later version.
