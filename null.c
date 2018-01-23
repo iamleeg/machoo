@@ -99,12 +99,10 @@ int main(int argc, char **argv)
    * listen until there have been no clients for 10 mins.
    */
   do {
-    ports_manage_port_operations_multithread(port_bucket,
-                                             demuxer,
-                                             2*60*1000, //millis
-                                             10*60*1000, //millis
-                                             0);
-  } while (trivfs_goaway(fsys,0));
+    ports_manage_port_operations_one_thread(port_bucket,
+                                            demuxer,
+                                            0);
+  } while (TRUE);
 
   return 0;
 }
