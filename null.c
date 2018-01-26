@@ -52,7 +52,7 @@ static int demuxer(mach_msg_header_t *inp,
 kern_return_t machoo_msg_send(
   mach_port_t receiver,
   machoo_selector selector,
-  mach_port_t *response)
+  int *response)
 {
   // for the moment, prove that we're receiving the message
   fprintf(stderr, "[%d %s]\n", receiver, selector);

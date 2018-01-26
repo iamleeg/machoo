@@ -34,6 +34,6 @@ import "machoo_defs.h";
 routine machoo_msg_send(
 	receiver: mach_port_t; /* request port */
         selector: machoo_selector; /* message selector */
-    out response: mach_port_t /* result */
+    out response: int /* result */
 );
 

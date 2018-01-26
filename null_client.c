@@ -27,7 +27,7 @@
 int main(int argc, char *argv[])
 {
   mach_port_t null_object;
-  mach_port_t returned_object;
+  int returned_object;
   kern_return_t retVal;
 
   null_object = file_name_lookup("/tmp/null", 0, 0);
@@ -38,7 +38,7 @@ int main(int argc, char *argv[])
     fprintf(stderr, "error sending message: %d\n", retVal);
     exit(-1);
   }
-  printf("returned object from [%u doNothing]: %u\n", null_object, returned_object);
+  printf("returned object from [%u doNothing]: %d\n", null_object, returned_object);
 
   return 0;
 }
