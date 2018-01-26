@@ -17,8 +17,13 @@
  * along with Machoo.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifndef _machoo_defs_h
+#define _machoo_defs_f
+
 #include <mach_error.h>
 #include <mach/mig_errors.h>
 
 typedef char machoo_selector[80];
+
+#endif
 

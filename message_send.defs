@@ -19,8 +19,13 @@
 
 subsystem machoo 500;
 
-#include <mach/std_types.defs>
-#include <mach/mach_types.defs>
+#include <hurd/hurd_types.defs>
+
+#ifdef STACK_IMPORTS
+STACK_IMPORTS
+#endif
+
+INTR_INTERFACE
 
 type machoo_selector = (MACH_MSG_TYPE_STRING, 8*80);
 
@@ -29,6 +34,6 @@ import "machoo_defs.h";
 routine machoo_msg_send(
 	receiver: mach_port_t; /* request port */
         selector: machoo_selector; /* message selector */
-    out response: mach_port_send_t /* result */
+    out response: mach_port_t /* result */
 );
 
