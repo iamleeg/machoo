@@ -26,11 +26,6 @@
 #include <hurd/ports.h>
 #include <hurd/trivfs.h>
 
-// ports needed for communication
-struct port_bucket *port_bucket;
-struct port_class *trivfs_control_class;
-struct port_class *trivfs_protid_class;
-
 // filesystem ops supported (i.e. none)
 int trivfs_fstype = FSTYPE_MISC;
 int trivfs_fsid = 0;
@@ -38,9 +33,11 @@ int trivfs_support_read = 0;
 int trivfs_support_write = 0;
 int trivfs_support_exec = 0;
 int trivfs_allow_open = 0;
+int trivfs_protid_nportclasses = 0;
+int trivfs_cntl_nportclasses = 0;
 
 // this is the real demuxer created by MIG
-extern boolean_t machoo_server(
+extern int machoo_server(
   mach_msg_header_t *InHeadP,
   mach_msg_header_t *OutHeadP);
 
@@ -48,7 +45,7 @@ extern boolean_t machoo_server(
 static int demuxer(mach_msg_header_t *inp,
                    mach_msg_header_t *outp)
 {
-  return machoo_server(inp, outp) || trivfs_demuxer(inp, outp);
+  return (machoo_server(inp, outp) || trivfs_demuxer(inp, outp));
 }
 
 // handle an incoming message!
@@ -79,31 +76,13 @@ int main(int argc, char **argv)
     fprintf(stderr, "cannot retrieve bootstrap port\n");
     exit(-1);
   }
-  // get the ports we're being talked to over
-  err = trivfs_add_port_bucket(&port_bucket);
-  if (err) {
-    fprintf(stderr, "cannot add port bucket\n");
-    exit(-1);
-  }
-  // register some trivfs gumph I should learn about
-  err = trivfs_add_control_port_class(&trivfs_control_class);
-  if (err) {
-    fprintf(stderr, "cannot add control port class\n");
-    exit(-1);
-  }
-  err = trivfs_add_protid_port_class(&trivfs_protid_class);
-  if (err) {
-    fprintf(stderr, "cannot add protid port class\n");
-    exit(-1);
-  }
-
   // reply to parent and start our filesystem
   err = trivfs_startup(bootstrap,
                        0,
-                       trivfs_control_class,
-                       port_bucket,
-                       trivfs_protid_class,
-                       port_bucket,
+                       0,
+                       0,
+                       0,
+                       0,
                        &fsys);
   if (err) {
     fprintf(stderr, "could not start trivfs\n");
@@ -114,14 +93,11 @@ int main(int argc, char **argv)
   mach_port_deallocate(mach_task_self(), bootstrap);
 
   /*
-   * listen for clients. Following the example of HURD's password server,
-   * listen until there have been no clients for 10 mins.
+   * listen for clients and do the event loop.
    */
-  do {
-    ports_manage_port_operations_one_thread(port_bucket,
-                                            demuxer,
-                                            0);
-  } while (TRUE);
+  ports_manage_port_operations_one_thread(fsys->pi.bucket,
+                                          demuxer,
+                                          0);
 
   return 0;
 }
