@@ -17,7 +17,7 @@
 # along with Machoo.  If not, see <http://www.gnu.org/licenses/>.
 
 .PHONY: all
-all: null
+all: null null_client
 
 null: null.c machooServer.c
 	$(CC) -D_GNU_SOURCE -o $@ $^ -ltrivfs -lports
