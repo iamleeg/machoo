@@ -17,14 +17,14 @@
  * along with Machoo.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "machoo.h"
-
 #include <stdio.h>
 #include <stdlib.h>
 
 #include <hurd.h>
 #include <hurd/ports.h>
 #include <hurd/trivfs.h>
+
+#include "machoo_defs.h"
 
 // filesystem ops supported (i.e. none)
 int trivfs_fstype = FSTYPE_MISC;
@@ -52,11 +52,17 @@ static int demuxer(mach_msg_header_t *inp,
 kern_return_t machoo_msg_send(
   mach_port_t receiver,
   machoo_selector selector,
-  int *response)
+  mach_port_t *response,
+  mach_msg_type_name_t *responsePoly
+)
 {
   // for the moment, prove that we're receiving the message
   fprintf(stderr, "[%d %s]\n", receiver, selector);
   // return self
+  if (responsePoly != NULL)
+  {
+    *responsePoly = MACH_MSG_TYPE_MOVE_SEND;
+  }
   if (response != NULL)
   {
     *response = receiver;

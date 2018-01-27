@@ -27,7 +27,7 @@
 int main(int argc, char *argv[])
 {
   mach_port_t null_object;
-  int returned_object;
+  mach_port_t returned_object;
   kern_return_t retVal;
 
   null_object = file_name_lookup("/tmp/null", 0, 0);
