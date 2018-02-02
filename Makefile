@@ -30,7 +30,7 @@ machoo_objectServer.c machoo_objectUser.c machoo.h: machoo_defs.h machoo_object.
 
 .PHONY: clean
 clean:
-	rm machoo_objectServer.c machoo_objectUser.c machoo_object.h null null_client
+	-rm machoo_objectServer.c machoo_objectUser.c machoo_object.h null null_client
 
 .PHONY: start_null
 start_null: null
