@@ -25,8 +25,8 @@ null: null.c machooServer.c
 null_client: null_client.c machooUser.c
 	$(CC) -D_GNU_SOURCE -o $@ $^
 
-machooServer.c machooUser.c machoo.h: machoo_defs.h message_send.defs
-	mig message_send.defs
+machooServer.c machooUser.c machoo.h: machoo_defs.h machoo.defs
+	mig machoo.defs
 
 .PHONY: clean
 clean:
