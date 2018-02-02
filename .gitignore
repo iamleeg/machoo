@@ -1,6 +1,6 @@
-machoo.h
-machooServer.c
-machooUser.c
+machoo_object.h
+machoo_objectServer.c
+machoo_objectUser.c
 null
 null_client
 

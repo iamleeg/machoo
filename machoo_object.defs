@@ -17,7 +17,7 @@
  * along with Machoo.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-subsystem machoo 500;
+subsystem machoo_object 500;
 
 #include <hurd/hurd_types.defs>
 
@@ -31,6 +31,10 @@ type machoo_selector = (MACH_MSG_TYPE_STRING, 8*80);
 
 import "machoo_defs.h";
 
+/*
+ * Send a message. You send this to an object you have created with the
+ * machoo_create_object routine, from machoo_class.
+ */
 routine machoo_msg_send(
 	receiver: mach_port_t; /* request port */
         selector: machoo_selector; /* message selector */

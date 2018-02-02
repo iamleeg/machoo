@@ -37,7 +37,7 @@ int trivfs_protid_nportclasses = 0;
 int trivfs_cntl_nportclasses = 0;
 
 // this is the real demuxer created by MIG
-extern int machoo_server(
+extern int machoo_object_server(
   mach_msg_header_t *InHeadP,
   mach_msg_header_t *OutHeadP);
 
@@ -45,7 +45,7 @@ extern int machoo_server(
 static int demuxer(mach_msg_header_t *inp,
                    mach_msg_header_t *outp)
 {
-  return (machoo_server(inp, outp) || trivfs_demuxer(inp, outp));
+  return (machoo_object_server(inp, outp) || trivfs_demuxer(inp, outp));
 }
 
 // handle an incoming message!

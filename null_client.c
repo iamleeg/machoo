@@ -22,7 +22,7 @@
 #include <hurd.h>
 #include <hurd/hurd_types.h>
 
-#include "machoo.h"
+#include "machoo_object.h"
 
 int main(int argc, char *argv[])
 {
