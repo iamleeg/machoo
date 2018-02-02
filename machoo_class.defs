@@ -17,29 +17,26 @@
  * along with Machoo.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <hurd.h>
-#include <hurd/hurd_types.h>
+subsystem machoo_class 1500;
 
-#include "machoo_class.h"
+#include <hurd/hurd_types.defs>
 
-int main(int argc, char *argv[])
-{
-  mach_port_t null_constructor;
-  mach_port_t returned_object;
-  kern_return_t retVal;
+#ifdef STACK_IMPORTS
+STACK_IMPORTS
+#endif
 
-  null_constructor = file_name_lookup("/tmp/null", 0, 0);
-  printf("null constructor port: %u\n", null_constructor);
+INTR_INTERFACE
 
-  retVal = machoo_create_object(null_constructor, &returned_object);
-  if (retVal != 0) {
-    fprintf(stderr, "error creating object: %d\n", retVal);
-    exit(-1);
-  }
-  printf("returned object from null server: %d\n", returned_object);
-
-  return 0;
-}
+/*
+ * Create an object. You send this message to a machoo translator on the Hurd,
+ * and what you get back is a port to which you can send the machoo_object
+ * routines.
+ *
+ * Note: this routine takes no arguments. If an object needs configuration,
+ * you should send it an init message after you've created it.
+ */
+routine machoo_create_object(
+	receiver: mach_port_t; /* request port */
+      out object: mach_port_send_t /* result */
+);
 

@@ -37,7 +37,7 @@ int trivfs_protid_nportclasses = 0;
 int trivfs_cntl_nportclasses = 0;
 
 // this is the real demuxer created by MIG
-extern int machoo_object_server(
+extern int machoo_class_server(
   mach_msg_header_t *InHeadP,
   mach_msg_header_t *OutHeadP);
 
@@ -45,7 +45,32 @@ extern int machoo_object_server(
 static int demuxer(mach_msg_header_t *inp,
                    mach_msg_header_t *outp)
 {
-  return (machoo_object_server(inp, outp) || trivfs_demuxer(inp, outp));
+  return (machoo_class_server(inp, outp) || trivfs_demuxer(inp, outp));
+}
+
+// create an object!
+/*
+ * TODO: this is a not-great implementation. It should create a new thread
+ * that's listening for the machoo_object routines, and pass a send right to
+ * that thread's port to the client.
+ */
+kern_return_t machoo_create_object(
+  mach_port_t receiver,
+  mach_port_t *object,
+  mach_msg_type_name_t *objectPoly
+)
+{
+  // for the moment, log the request
+  fprintf(stderr, "creating a null object\n");
+  // move send rights to the client
+  if (objectPoly) {
+    *objectPoly = MACH_MSG_TYPE_MOVE_SEND;
+  }
+  // this is not the correct port
+  if (object) {
+    *object = receiver;
+  }
+  return ERR_SUCCESS;
 }
 
 // handle an incoming message!

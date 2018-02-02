@@ -19,18 +19,32 @@
 .PHONY: all
 all: null null_client
 
-null: null.c machoo_objectServer.c
+null: null.c machoo_objectServer.c machoo_classServer.c
 	$(CC) -D_GNU_SOURCE -o $@ $^ -ltrivfs -lports
 
-null_client: null_client.c machoo_objectUser.c
+null_client: null_client.c machoo_objectUser.c machoo_classUser.c
 	$(CC) -D_GNU_SOURCE -o $@ $^
+
+machoo_classServer.c machoo_classUser.c machoo_class.h: machoo_class.defs
+	mig machoo_class.defs
 
 machoo_objectServer.c machoo_objectUser.c machoo_object.h: machoo_defs.h machoo_object.defs
 	mig machoo_object.defs
 
+.PHONY: clean_null
+clean_null:
+	-rm null null_client
+
+.PHONY: clean_class
+clean_class:
+	-rm machoo_classServer.c machoo_classUser.c machoo_class.h
+
+.PHONY: clean_object
+clean_object:
+	-rm machoo_objectServer.c machoo_objectUser.c machoo_object.h
+
 .PHONY: clean
-clean:
-	-rm machoo_objectServer.c machoo_objectUser.c machoo_object.h null null_client
+clean: clean_null clean_class clean_object
 
 .PHONY: start_null
 start_null: null

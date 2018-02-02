@@ -1,3 +1,6 @@
+machoo_class.h
+machoo_classServer.c
+machoo_classUser.c
 machoo_object.h
 machoo_objectServer.c
 machoo_objectUser.c
