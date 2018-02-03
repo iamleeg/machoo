@@ -19,8 +19,8 @@
 .PHONY: all
 all: null null_client
 
-null: null.c machoo_objectServer.c machoo_classServer.c
-	$(CC) -D_GNU_SOURCE -o $@ $^ -ltrivfs -lports
+null: null.c null_object.c machoo_objectServer.c machoo_classServer.c
+	$(CC) -D_GNU_SOURCE -o $@ $^ -ltrivfs -lports -lpthread
 
 null_client: null_client.c machoo_objectUser.c machoo_classUser.c
 	$(CC) -D_GNU_SOURCE -o $@ $^

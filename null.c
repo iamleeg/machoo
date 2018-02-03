@@ -20,6 +20,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <pthread/pthread.h>
+
 #include <hurd.h>
 #include <hurd/ports.h>
 #include <hurd/trivfs.h>
@@ -48,12 +50,9 @@ static int demuxer(mach_msg_header_t *inp,
   return (machoo_class_server(inp, outp) || trivfs_demuxer(inp, outp));
 }
 
+extern void *null_object(void *port_bucket);
+
 // create an object!
-/*
- * TODO: this is a not-great implementation. It should create a new thread
- * that's listening for the machoo_object routines, and pass a send right to
- * that thread's port to the client.
- */
 kern_return_t machoo_create_object(
   mach_port_t receiver,
   mach_port_t *object,
@@ -62,37 +61,50 @@ kern_return_t machoo_create_object(
 {
   // for the moment, log the request
   fprintf(stderr, "creating a null object\n");
+  // create a port bucket
+  struct port_bucket *bucket = ports_create_bucket();
+  fprintf(stderr, "bucket\n");
+  // create a port class
+  struct port_class *obj_class = ports_create_class(NULL, NULL);
+  fprintf(stderr, "class\n");
+  // add a port to the bucket
+  struct port_info obj_port;
+  error_t port_error = ports_create_port(obj_class,
+                                         bucket,
+                                         sizeof(obj_port),
+                                         &obj_port);
+  if (port_error != ERR_SUCCESS) {
+    fprintf(stderr, "error creating port %d\n", port_error);
+    return KERN_FAILURE;
+  }
+  fprintf(stderr, "port\n");
+  // acquire send rights
+  mach_port_t port_name = ports_get_right(&obj_port);
+  fprintf(stderr, "receive right\n");
+  kern_return_t send_error = mach_port_mod_refs(mach_task_self(),
+                                                port_name,
+                                                MACH_PORT_RIGHT_SEND,
+                                                1);
+  if (send_error != ERR_SUCCESS) {
+    fprintf(stderr, "error acquiring send right %d", send_error);
+    return KERN_FAILURE;
+  }
+  fprintf(stderr, "send right\n");
   // move send rights to the client
   if (objectPoly) {
     *objectPoly = MACH_MSG_TYPE_MOVE_SEND;
   }
-  // this is not the correct port
   if (object) {
-    *object = receiver;
+    *object = port_name;
   }
-  return ERR_SUCCESS;
-}
+  // start the thread!
+  int thread_created;
+  do {
+    thread_created = pthread_create(NULL, NULL, null_object, bucket);
+  } while (thread_created == EAGAIN);
 
-// handle an incoming message!
-kern_return_t machoo_msg_send(
-  mach_port_t receiver,
-  machoo_selector selector,
-  mach_port_t *response,
-  mach_msg_type_name_t *responsePoly
-)
-{
-  // for the moment, prove that we're receiving the message
-  fprintf(stderr, "[%d %s]\n", receiver, selector);
-  // return self
-  if (responsePoly != NULL)
-  {
-    *responsePoly = MACH_MSG_TYPE_MOVE_SEND;
-  }
-  if (response != NULL)
-  {
-    *response = receiver;
-  }
-  return ERR_SUCCESS;
+  fprintf(stderr, "start thread\n");
+  return (thread_created == 0) ? ERR_SUCCESS : KERN_FAILURE;
 }
 
 int main(int argc, char **argv)
