@@ -63,10 +63,8 @@ kern_return_t machoo_create_object(
   fprintf(stderr, "creating a null object\n");
   // create a port bucket
   struct port_bucket *bucket = ports_create_bucket();
-  fprintf(stderr, "bucket\n");
   // create a port class
   struct port_class *obj_class = ports_create_class(NULL, NULL);
-  fprintf(stderr, "class\n");
   // add a port to the bucket
   struct port_info *obj_port;
   error_t port_error = ports_create_port(obj_class,
@@ -77,10 +75,8 @@ kern_return_t machoo_create_object(
     fprintf(stderr, "error creating port %d\n", port_error);
     return KERN_FAILURE;
   }
-  fprintf(stderr, "port\n");
   // acquire send rights
   *object = ports_get_right(obj_port);
-  fprintf(stderr, "receive right\n");
   // move send rights to the client
   *objectPoly = MACH_MSG_TYPE_MAKE_SEND;
   // start the thread!
@@ -90,7 +86,6 @@ kern_return_t machoo_create_object(
     thread_created = pthread_create(&unused, NULL, null_object, bucket);
   } while (thread_created == EAGAIN);
 
-  fprintf(stderr, "start thread\n");
   return (thread_created == 0) ? ERR_SUCCESS : KERN_FAILURE;
 }
 
