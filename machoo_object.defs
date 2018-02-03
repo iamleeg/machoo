@@ -34,10 +34,10 @@ import "machoo_defs.h";
 /*
  * Send a message. You send this to an object you have created with the
  * machoo_create_object routine, from machoo_class.
+ * For the moment this returns void. I'll extend that.
  */
 routine machoo_msg_send(
 	receiver: mach_port_t; /* request port */
-        selector: machoo_selector; /* message selector */
-    out response: mach_port_send_t /* result */
+        selector: machoo_selector /* message selector */
 );
 

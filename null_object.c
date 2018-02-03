@@ -41,21 +41,10 @@ void *null_object(void *port_bucket)
 // handle an incoming message!
 kern_return_t machoo_msg_send(
   mach_port_t receiver,
-  machoo_selector selector,
-  mach_port_t *response,
-  mach_msg_type_name_t *responsePoly
+  machoo_selector selector
 )
 {
   // for the moment, prove that we're receiving the message
   fprintf(stderr, "[%lu %s]\n", receiver, selector);
-  // return self
-  if (responsePoly != NULL)
-  {
-    *responsePoly = MACH_MSG_TYPE_MOVE_SEND;
-  }
-  if (response != NULL)
-  {
-    *response = receiver;
-  }
   return ERR_SUCCESS;
 }

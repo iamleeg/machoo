@@ -23,6 +23,7 @@
 #include <hurd/hurd_types.h>
 
 #include "machoo_class.h"
+#include "machoo_object.h"
 
 int main(int argc, char *argv[])
 {
@@ -39,6 +40,13 @@ int main(int argc, char *argv[])
     exit(-1);
   }
   printf("returned object from null server: %d\n", returned_object);
+
+  retVal = machoo_msg_send(returned_object,
+                           "doSomething");
+  if (retVal != 0) {
+    fprintf(stderr, "error sending message: %d\n", retVal);
+    exit(-1);
+  }
 
   return 0;
 }
