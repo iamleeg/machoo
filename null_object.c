@@ -35,6 +35,7 @@ void *null_object(void *port_bucket)
   ports_manage_port_operations_one_thread(port_bucket,
                                           machoo_object_server,
                                           0);
+  return NULL;
 }
 
 // handle an incoming message!
@@ -46,7 +47,7 @@ kern_return_t machoo_msg_send(
 )
 {
   // for the moment, prove that we're receiving the message
-  fprintf(stderr, "[%d %s]\n", receiver, selector);
+  fprintf(stderr, "[%lu %s]\n", receiver, selector);
   // return self
   if (responsePoly != NULL)
   {

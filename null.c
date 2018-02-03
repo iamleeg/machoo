@@ -68,10 +68,10 @@ kern_return_t machoo_create_object(
   struct port_class *obj_class = ports_create_class(NULL, NULL);
   fprintf(stderr, "class\n");
   // add a port to the bucket
-  struct port_info obj_port;
+  struct port_info *obj_port;
   error_t port_error = ports_create_port(obj_class,
                                          bucket,
-                                         sizeof(obj_port),
+                                         sizeof(struct port_info),
                                          &obj_port);
   if (port_error != ERR_SUCCESS) {
     fprintf(stderr, "error creating port %d\n", port_error);
@@ -79,28 +79,15 @@ kern_return_t machoo_create_object(
   }
   fprintf(stderr, "port\n");
   // acquire send rights
-  mach_port_t port_name = ports_get_right(&obj_port);
+  *object = ports_get_right(obj_port);
   fprintf(stderr, "receive right\n");
-  kern_return_t send_error = mach_port_mod_refs(mach_task_self(),
-                                                port_name,
-                                                MACH_PORT_RIGHT_SEND,
-                                                1);
-  if (send_error != ERR_SUCCESS) {
-    fprintf(stderr, "error acquiring send right %d", send_error);
-    return KERN_FAILURE;
-  }
-  fprintf(stderr, "send right\n");
   // move send rights to the client
-  if (objectPoly) {
-    *objectPoly = MACH_MSG_TYPE_MOVE_SEND;
-  }
-  if (object) {
-    *object = port_name;
-  }
+  *objectPoly = MACH_MSG_TYPE_MAKE_SEND;
   // start the thread!
   int thread_created;
   do {
-    thread_created = pthread_create(NULL, NULL, null_object, bucket);
+    pthread_t unused;
+    thread_created = pthread_create(&unused, NULL, null_object, bucket);
   } while (thread_created == EAGAIN);
 
   fprintf(stderr, "start thread\n");
