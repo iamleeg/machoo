@@ -18,7 +18,7 @@
  */
 
 #ifndef _machoo_defs_h
-#define _machoo_defs_f
+#define _machoo_defs_h
 
 #include <mach_error.h>
 #include <mach/mig_errors.h>
